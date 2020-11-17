@@ -34,7 +34,7 @@ func getStatInfo(name string) (*statInfo, error) {
 		var fi os.FileInfo
 		if fi, err = os.Stat(name); err == nil {
 			if ss, ok := fi.Sys().(*syscall.Win32FileAttributeData); ok {
-				si.Device = 0
+				si.Device = uint64(0)
 				si.Mode = fi.Mode().String()
 				si.Size = humanize.Comma(fi.Size())
 				si.Atime = time.Unix(0, ss.LastAccessTime.Nanoseconds()).Format(RFC3339NanoZero)

@@ -12,7 +12,7 @@ const (
 
 type statInfo struct {
 	Name      string `json:"name"`
-	Device    int32  `json:"device"`
+	Device    uint64 `json:"device"`
 	Mode      string `json:"mode"`
 	User      string `json:"user"`
 	Group     string `json:"group"`
