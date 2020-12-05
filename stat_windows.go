@@ -35,8 +35,10 @@ func getStatInfo(name string) (*statInfo, error) {
 		var fi os.FileInfo
 		if fi, err = os.Stat(name); err == nil {
 			if ss, ok := fi.Sys().(*syscall.Win32FileAttributeData); ok {
-				if ts := times.Get(fi); ts.HasChangeTime() {
-					si.Ctime = ts.ChangeTime().Format(RFC3339NanoZero)
+				if ts, err := times.Stat(name); err == nil {
+					//if ts.HasChangeTime() {
+						si.Ctime = ts.ChangeTime().Format(RFC3339NanoZero)
+					//}
 				}
 				si.Device = uint64(0)
 				si.Mode = fi.Mode().String()
