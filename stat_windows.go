@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/djherbis/times"
 	"github.com/dustin/go-humanize"
 	"golang.org/x/sys/windows"
 )
@@ -34,13 +35,15 @@ func getStatInfo(name string) (*statInfo, error) {
 		var fi os.FileInfo
 		if fi, err = os.Stat(name); err == nil {
 			if ss, ok := fi.Sys().(*syscall.Win32FileAttributeData); ok {
+				if ts := times.Get(fi); ts.HasChangeTime() {
+					si.Ctime = ts.ChangeTime().Format(RFC3339NanoZero)
+				}
 				si.Device = uint64(0)
 				si.Mode = fi.Mode().String()
 				si.Size = humanize.Comma(fi.Size())
 				si.Atime = time.Unix(0, ss.LastAccessTime.Nanoseconds()).Format(RFC3339NanoZero)
 				si.Mtime = time.Unix(0, ss.LastWriteTime.Nanoseconds()).Format(RFC3339NanoZero)
-				si.Ctime = time.Unix(0, ss.CreationTime.Nanoseconds()).Format(RFC3339NanoZero)
-				si.Btime = ""
+				si.Btime = time.Unix(0, ss.CreationTime.Nanoseconds()).Format(RFC3339NanoZero)
 				si.Blocks = ""
 				si.BlockSize = ""
 				si.Flags = ss.FileAttributes
