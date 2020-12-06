@@ -2,8 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
+
+	"github.com/shanebarnes/stat/internal/version"
 )
 
 const (
@@ -27,8 +30,11 @@ type statInfo struct {
 }
 
 func main() {
-	if len(os.Args) > 1 {
-
+	printVersion := flag.Bool("version", false, "Print version information")
+	flag.Parse()
+	if *printVersion {
+		fmt.Fprintf(os.Stdout, "stat version %s\n", version.String())
+	} else if len(os.Args) > 1 {
 		stats := []*statInfo{}
 		for _, arg := range os.Args[1:] {
 			if si, err := getStatInfo(arg); err == nil {
