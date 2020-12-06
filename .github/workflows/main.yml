@@ -16,8 +16,15 @@ jobs:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Build
+      - name: Build Artifacts
         run: |
           go env
+          GOOS=$(go env GOOS)
+          mkdir -p bin
           go vet -v ./...
-          go build -v ./...
+          go build -o "bin/stat-$GOOS" -v ./...
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: stat
+          path: bin
