@@ -1,6 +1,5 @@
 // References:
 //     https://golang.org/pkg/syscall/?GOOS=windows#Win32FileAttributeData
-//     https://github.com/djherbis/times
 
 package main
 
@@ -37,7 +36,7 @@ func getStatInfo(name string) (*statInfo, error) {
 			if ss, ok := fi.Sys().(*syscall.Win32FileAttributeData); ok {
 				if ts, err := times.Stat(name); err == nil {
 					//if ts.HasChangeTime() {
-						si.Ctime = ts.ChangeTime().Format(RFC3339NanoZero)
+					si.Ctime = ts.ChangeTime().Format(RFC3339NanoZero)
 					//}
 				}
 				si.Device = uint64(0)

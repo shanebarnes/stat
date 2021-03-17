@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/shanebarnes/stat/internal/version"
 )
 
-const (
-	RFC3339NanoZero = "2006-01-02T15:04:05.000000000Z07:00"
-)
+const RFC3339NanoZero = "2006-01-02T15:04:05.000000000Z07:00"
 
 type statInfo struct {
 	Name      string `json:"name"`
@@ -27,6 +26,7 @@ type statInfo struct {
 	Blocks    string `json:"blocks"`
 	BlockSize string `json:"blockSize"`
 	Flags     uint32 `json:"flags"`
+	Error     string `json:"error,omitempty"`
 }
 
 func main() {
@@ -35,23 +35,23 @@ func main() {
 	if *printVersion {
 		fmt.Fprintf(os.Stdout, "stat version %s\n", version.String())
 	} else if len(os.Args) > 1 {
-		stats := []*statInfo{}
-		for _, arg := range os.Args[1:] {
-			if si, err := getStatInfo(arg); err == nil {
-				stats = append(stats, si)
+		out := os.Stdout
+		enc := json.NewEncoder(out)
+		enc.SetIndent("", "  ")
+		io.WriteString(out, "[\n")
+		for i, arg := range os.Args[1:] {
+			si, err := getStatInfo(arg)
+			if err != nil {
+				si = &statInfo{Name: arg, Error: err.Error()}
+			}
+			enc.Encode(si)
+
+			if (i + 2) < len(os.Args) {
+				io.WriteString(out, ",")
 			}
 		}
-
-		printStatInfo(stats)
+		io.WriteString(out, "]\n")
 	} else {
 		fmt.Fprintf(os.Stdout, "stat [file ...]\n")
 	}
-}
-
-func printStatInfo(si []*statInfo) error {
-	buf, err := json.MarshalIndent(si, "", "    ")
-	if err == nil {
-		fmt.Println(string(buf))
-	}
-	return err
 }
