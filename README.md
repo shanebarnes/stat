@@ -1,5 +1,6 @@
 # stat
-Portable file status utility
+Portable command-line utility that displays detailed information about given
+files including nanosecond resolution for file timestamp fields.
 
 ![build workflow](https://github.com/shanebarnes/stat/workflows/stat/badge.svg)
 
