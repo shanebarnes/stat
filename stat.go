@@ -1,57 +1,67 @@
-package main
+package stat
 
 import (
-	"encoding/json"
-	"flag"
-	"fmt"
-	"io"
 	"os"
-
-	"github.com/shanebarnes/stat/internal/version"
+	"time"
 )
 
-const RFC3339NanoZero = "2006-01-02T15:04:05.000000000Z07:00"
-
-type statInfo struct {
-	Name      string `json:"name"`
-	Device    uint64 `json:"device"`
-	Mode      string `json:"mode"`
-	User      string `json:"user"`
-	Group     string `json:"group"`
-	Size      string `json:"size"`
-	Atime     string `json:"aTime"`
-	Mtime     string `json:"mTime"`
-	Ctime     string `json:"cTime"`
-	Btime     string `json:"bTime"`
-	Blocks    string `json:"blocks"`
-	BlockSize string `json:"blockSize"`
-	Flags     uint32 `json:"flags"`
-	Error     string `json:"error,omitempty"`
+type StatInfo struct {
+	Name      string            `csv:"name"               json:"name"               yaml:"name"`
+	Device    uint64            `csv:"device"             json:"device"             yaml:"device"`
+	Mode      os.FileMode       `csv:"mode"               json:"mode"               yaml:"mode"`
+	User      uint32            `csv:"user"               json:"user"               yaml:"user"`
+	Group     uint32            `csv:"group"              json:"group"              yaml:"group"`
+	Size      int64             `csv:"size"               json:"size"               yaml:"size"`
+	Atime     time.Time         `csv:"aTime"              json:"aTime"              yaml:"aTime"`
+	Mtime     time.Time         `csv:"mTime"              json:"mTime"              yaml:"mTime"`
+	Ctime     time.Time         `csv:"cTime"              json:"cTime"              yaml:"cTime"`
+	Btime     time.Time         `csv:"bTime"              json:"bTime"              yaml:"bTime"`
+	Blocks    int64             `csv:"blocks"             json:"blocks"             yaml:"blocks"`
+	BlockSize int32             `csv:"blockSize"          json:"blockSize"          yaml:"blockSize"`
+	Flags     uint32            `csv:"flags"              json:"flags"              yaml:"flags"`
+	Metadata  map[string]string `csv:"metadata,omitempty" json:"metadata,omitempty" yaml:"metadata,omitempty"`
+	Error     error             `csv:"error,omitempty"    json:"error,omitempty"    yaml:"error,omitempty"`
 }
 
-func main() {
-	printVersion := flag.Bool("version", false, "Print version information")
-	flag.Parse()
-	if *printVersion {
-		fmt.Fprintf(os.Stdout, "stat version %s\n", version.String())
-	} else if len(os.Args) > 1 {
-		out := os.Stdout
-		enc := json.NewEncoder(out)
-		enc.SetIndent("", "  ")
-		io.WriteString(out, "[\n")
-		for i, arg := range os.Args[1:] {
-			si, err := getStatInfo(arg)
-			if err != nil {
-				si = &statInfo{Name: arg, Error: err.Error()}
-			}
-			enc.Encode(si)
+type StatInfoPretty struct {
+	Name      string            `csv:"name"               json:"name"               yaml:"name"`
+	Device    uint64            `csv:"device"             json:"device"             yaml:"device"`
+	Mode      string            `csv:"mode"               json:"mode"               yaml:"mode"`
+	User      uint32            `csv:"user"               json:"user"               yaml:"user"`
+	Group     uint32            `csv:"group"              json:"group"              yaml:"group"`
+	Size      int64             `csv:"size"               json:"size"               yaml:"size"`
+	Atime     string            `csv:"aTime"              json:"aTime"              yaml:"aTime"`
+	Mtime     string            `csv:"mTime"              json:"mTime"              yaml:"mTime"`
+	Ctime     string            `csv:"cTime"              json:"cTime"              yaml:"cTime"`
+	Btime     string            `csv:"bTime"              json:"bTime"              yaml:"bTime"`
+	Blocks    int64             `csv:"blocks"             json:"blocks"             yaml:"blocks"`
+	BlockSize int32             `csv:"blockSize"          json:"blockSize"          yaml:"blockSize"`
+	Flags     uint32            `csv:"flags"              json:"flags"              yaml:"flags"`
+	Metadata  map[string]string `csv:"metadata,omitempty" json:"metadata,omitempty" yaml:"metadata,omitempty"`
+	Error     string            `csv:"error"              json:"error,omitempty"    yaml:"error,omitempty"`
+}
 
-			if (i + 2) < len(os.Args) {
-				io.WriteString(out, ",")
-			}
-		}
-		io.WriteString(out, "]\n")
-	} else {
-		fmt.Fprintf(os.Stdout, "stat [file ...]\n")
+func (si *StatInfo) Pretty(dateLayout string) *StatInfoPretty {
+	err := ""
+	if si.Error != nil {
+		err = si.Error.Error()
+	}
+
+	return &StatInfoPretty{
+		Name:      si.Name,
+		Device:    si.Device,
+		Mode:      si.Mode.String(),
+		User:      si.User,
+		Group:     si.Group,
+		Size:      si.Size,
+		Atime:     si.Atime.Format(dateLayout),
+		Mtime:     si.Mtime.Format(dateLayout),
+		Ctime:     si.Ctime.Format(dateLayout),
+		Btime:     si.Btime.Format(dateLayout),
+		Blocks:    si.Blocks,
+		BlockSize: si.BlockSize,
+		Flags:     si.Flags,
+		Metadata:  si.Metadata,
+		Error:     err,
 	}
 }
