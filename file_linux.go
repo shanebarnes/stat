@@ -25,7 +25,7 @@ func (fs *FileStat) Stat(name string) (*StatInfo, error) {
 				si.Ctime = time.Unix(ss.Ctim.Sec, ss.Ctim.Nsec)
 				si.Btime = time.Time{}
 				si.Blocks = ss.Blocks
-				si.BlockSize = ss.Blksize
+				si.BlockSize = int32(ss.Blksize)
 				si.Flags = uint32(0)
 			}
 		}
