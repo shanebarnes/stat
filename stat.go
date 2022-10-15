@@ -9,8 +9,8 @@ type StatInfo struct {
 	Name      string            `csv:"name"               json:"name"               yaml:"name"`
 	Device    uint64            `csv:"device"             json:"device"             yaml:"device"`
 	Mode      os.FileMode       `csv:"mode"               json:"mode"               yaml:"mode"`
-	User      uint32            `csv:"user"               json:"user"               yaml:"user"`
-	Group     uint32            `csv:"group"              json:"group"              yaml:"group"`
+	User      string            `csv:"user"               json:"user"               yaml:"user"`
+	Group     string            `csv:"group"              json:"group"              yaml:"group"`
 	Size      int64             `csv:"size"               json:"size"               yaml:"size"`
 	Atime     time.Time         `csv:"aTime"              json:"aTime"              yaml:"aTime"`
 	Mtime     time.Time         `csv:"mTime"              json:"mTime"              yaml:"mTime"`
@@ -27,8 +27,8 @@ type StatInfoPretty struct {
 	Name      string            `csv:"name"               json:"name"               yaml:"name"`
 	Device    uint64            `csv:"device"             json:"device"             yaml:"device"`
 	Mode      string            `csv:"mode"               json:"mode"               yaml:"mode"`
-	User      uint32            `csv:"user"               json:"user"               yaml:"user"`
-	Group     uint32            `csv:"group"              json:"group"              yaml:"group"`
+	User      string            `csv:"user"               json:"user"               yaml:"user"`
+	Group     string            `csv:"group"              json:"group"              yaml:"group"`
 	Size      int64             `csv:"size"               json:"size"               yaml:"size"`
 	Atime     string            `csv:"aTime"              json:"aTime"              yaml:"aTime"`
 	Mtime     string            `csv:"mTime"              json:"mTime"              yaml:"mTime"`

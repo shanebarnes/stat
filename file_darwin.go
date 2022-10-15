@@ -17,8 +17,8 @@ func (fs *FileStat) Stat(name string) (*StatInfo, error) {
 			if ss, ok := fi.Sys().(*syscall.Stat_t); ok {
 				si.Device = uint64(ss.Dev)
 				si.Mode = fi.Mode()
-				si.User = ss.Uid
-				si.Group = ss.Gid
+				si.User = getUserName(ss.Uid)
+				si.Group = getGroupName(ss.Gid)
 				si.Size = ss.Size
 				si.Atime = time.Unix(ss.Atimespec.Sec, ss.Atimespec.Nsec)
 				si.Mtime = time.Unix(ss.Mtimespec.Sec, ss.Mtimespec.Nsec)

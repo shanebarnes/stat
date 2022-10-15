@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/djherbis/times"
-	"github.com/dustin/go-humanize"
 	"golang.org/x/sys/windows"
 )
 
@@ -36,17 +35,17 @@ func (fs *FileStat) Stat(name string) (*StatInfo, error) {
 			if ss, ok := fi.Sys().(*syscall.Win32FileAttributeData); ok {
 				if ts, err := times.Stat(name); err == nil {
 					//if ts.HasChangeTime() {
-					si.Ctime = ts.ChangeTime().Format(RFC3339NanoZero)
+					si.Ctime = ts.ChangeTime()
 					//}
 				}
 				si.Device = uint64(0)
-				si.Mode = fi.Mode().String()
-				si.Size = humanize.Comma(fi.Size())
-				si.Atime = time.Unix(0, ss.LastAccessTime.Nanoseconds()).Format(RFC3339NanoZero)
-				si.Mtime = time.Unix(0, ss.LastWriteTime.Nanoseconds()).Format(RFC3339NanoZero)
-				si.Btime = time.Unix(0, ss.CreationTime.Nanoseconds()).Format(RFC3339NanoZero)
-				si.Blocks = ""
-				si.BlockSize = ""
+				si.Mode = fi.Mode()
+				si.Size = fi.Size()
+				si.Atime = time.Unix(0, ss.LastAccessTime.Nanoseconds())
+				si.Mtime = time.Unix(0, ss.LastWriteTime.Nanoseconds())
+				si.Btime = time.Unix(0, ss.CreationTime.Nanoseconds())
+				si.Blocks = 0
+				si.BlockSize = 0
 				si.Flags = ss.FileAttributes
 			}
 			if sd, err := getSecurityInfo(si.Name); err == nil {
