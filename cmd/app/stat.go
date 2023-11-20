@@ -111,8 +111,10 @@ func main() {
 
 		for _, file := range flagSet.Args() {
 			// TODO: range over directories? if recursive option set?
-			var err error
-			var si *stat.StatInfo
+			var (
+				err error
+				si  *stat.StatInfo
+			)
 			switch flagStorageType {
 			case storageFile:
 				si, err = stat.NewFileStat().Stat(file)
