@@ -22,11 +22,11 @@ jobs:
         with:
           go-version: ${{ matrix.go_version }}
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Build Artifacts
         run: ${{ matrix.script_name }}
       - name: Upload Artifacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
           name: stat
           path: bin
